@@ -1,35 +1,7 @@
 let task_list_node = document.getElementById('task-list');
-//2021-09-17T06:21:00.101Z
-/*
-var deadLine  = new Date('1991-02-04:22:15:18')
-var submittedDate  = new Date('2002-02-04:22:15:18')
-task = {
-  id: 4,
-  submittedFlag : true,
-  name: '期末試験',
-  deadLine : null,
-  submittedDate: submittedDate,
-  pdf: null,
-  text: '完了'
-}
-task['deadline'] = deadLine
-*/
-
 /*
  * httpsリクエスト
 */
-let task;
-fetch("http://localhost:3000/task")
-  .then((response) =>{
-    console.log("Success fetch")
-    console.log(response);
-    console.log(response.body);
-    console.log(JSON.stringify(response));
-    return response;
-  } )
-
-  .catch((err) => console.log(err));
-
 fetch("http://localhost:3000/task")
   .then((response) =>{
     console.log("Success fetch")
@@ -37,16 +9,39 @@ fetch("http://localhost:3000/task")
     return response.json();
   } )
   .then((task_list) => {
-    console.log(task)
+    console.log(task_list)
     for (let i = 0; i < task_list.length; i++) {
       console.log(task_list[i])
       task_list_node.appendChild(createTaskItemNode(task_list[i]));
+      console.log(createTaskItemNode(task_list[i]))
     }
+
     return task_list;
   })
   
   .catch((err) => console.log(err));
 
+/*
+ * 指定されたタグのノードを作成する。
+ * kind       : タグ
+ * className  : クラス名
+ * text       : テキスト
+ * 
+*/
+function createNode(kind, className, text){
+  let node = document.createElement(kind);
+  let attrnode;
+  //null or 空文字の場合
+  if(className){
+    attrnode= document.createAttribute('class');
+    attrnode.value = className;
+    node.setAttributeNode(attrnode);
+  }
+  if(text){
+    node.textContent = text;
+  }
+  return node
+}
 /*
  * taskオブジェクトを元に、task-itemのノードを作成する関数。
  * task = {
@@ -80,28 +75,6 @@ function isExpired(deadline) {
   let current_date = new Date();
   return (deadline_date < current_date)
 }
-/*
- * 指定されたタグのノードを作成する。
- * kind       : タグ
- * className  : クラス名
- * text       : テキスト
- * 
-*/
-function createNode(kind, className, text){
-  let node = document.createElement(kind);
-  let attrnode;
-  //null or 空文字の場合
-  if(className){
-    attrnode= document.createAttribute('class');
-    attrnode.value = className;
-    node.setAttributeNode(attrnode);
-  }
-  if(text){
-    node.textContent = text;
-  }
-  return node
-}
-
 /*
  * task.deadlineはstr型とする. ただし形は1991-02-04T13:15:18.000Z
 */

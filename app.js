@@ -29,6 +29,12 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
+/*
+ * 以下の2つはapp.getやpostメソッドのreq.bodyをパースするのに必要なミドルウェア
+*/
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
 var connection = mysql.createConnection({
   host: 'localhost',
   user    : 'root',
@@ -61,18 +67,17 @@ app.get("/task",  async (req, res) => {
 */
 app.post("/register", (req, res) => {
   console.log("Fin : Receive register-task request\n");
-  console.log(req.body);
   registerTask(req.body);
-  /*res.render("test", { name: "Yamada" });*/
+
 });
 /*
  * サーバーの開始
 */
 app.listen(port, () => console.log(`App started on port ${port}.`));
 
-function getTaskListRes(){
-  return new Promise(getTaskList());
-}
+/*
+ * データベースからtask_listを取得する関数
+*/
 function getTaskList(){
   const sql = "select * from tasks"
   connection.query(sql, function (err, result, fields) {  
@@ -118,3 +123,41 @@ function getTaskList(){
   })
 */
 }
+
+
+function registerTask(task){
+  task = checkTask(task);
+  connection.query('insert into tasks set ?', { 
+    submittedFlag : task["submittedFlag"],
+    name: task["name"],
+    category: task["category"],
+    deadLine : task["deadline"],
+    submittedDate: null,
+    pdf: null,
+    text: null
+  }, function( error, result ){
+      if (error) throw error;  
+      console.log(result)
+  })
+  
+  console.log("fin : register", end="")
+  console.log(task)
+  
+}
+/*
+ * データベースに登録するtaskが条件を満たしているかを確認する関数。
+ * taskの初期値も設定する
+*/
+function checkTask(task){
+  if(task.submittedFlag == null) task.submittedFlag=false;
+  /*
+  Object.keys(task).map((key) => {
+    console.log('key:' + key + '\tvalue:' + task[key]);
+  });
+  */
+  return task;
+}
+
+
+
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <link rel="stylesheet" href="register-task.css">
+
+  <script src="register-task.js" defer></script>
+  <head>
+    <title>My-LMS</title>
+  </head>
+  <body>
+    
+   <nav class = "header-nav">
+    <ul class = "header-nav-menu">
+      <li class = "menu-item"><a href = "index.html">トップ</a></li>
+      <li class = "menu-item"><a href = "register-task.html">課題登録</a></li>
+    </ul>
+  </nav>
+  <div class = "main">
+    <div class="regi-item">
+      <input type="text" id="category-name" placeholder="カテゴリ" value="電子回路">
+    </div>
+    <div class="regi-item">
+      <input type="text" id="task-name" placeholder="課題名" value="第12回　ノート">
+    </div>
+    <div class="regi-item" id = "deadline">
+      <p>期限</p>
+      <input type="date" id="task-deadline-date" value="2024-01-01">
+      <input type="time" id="task-deadline-time" value="23:59">
+    </div>
+
+    <div class = "regi-button">
+      <button type="submit" id = "submit-button">登録</button>
+    </div>
+  </div>
+  
+
+
+  </body>
+</html>

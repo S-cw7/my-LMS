@@ -1,0 +1,147 @@
+/* 共通*/
+
+/*メニューバー 共通*/
+html{
+  font-family: "Open Sans", sans-serif; /* これが Google フォントから取得した残りの出力になるはず。 */
+}
+body{
+  /*width: 600px;*/
+  padding: 0 20px 20px 20px;
+  border: 5px solid black; 
+
+}
+ul, li{
+  list-style: none;
+}
+
+a{
+  text-decoration:none;
+}
+
+.header-nav-menu{
+  display: flex;
+  align-items:start;
+  gap: 10px;
+  
+  
+}
+.menu-item{
+  width: 100px;
+  height: 32px;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+.menu-item:hover{
+  background-color: rgb(210, 210, 210);
+}
+.menu-item a{
+  color: rgb(54, 54, 54);
+
+}
+
+.main{
+  display: flex;
+  flex-direction: column;
+}
+.regi-item{
+  display: flex;
+  column-gap: 40px;
+  align-items: center;
+  
+}
+
+.regi-item input[type='text'] {
+
+	width: 100%;
+	padding: 0.3em;
+	transition: 0.3s;
+  font-size: 16px;
+	/*color: #aaaaaa;*/
+  color: black;
+	border: none;
+	border-bottom: 2px solid #1b2538;
+	background: white;
+}
+.regi-item p{
+  width:100px;
+  /*color: #6d6d6d;*/
+  color: black;
+  background: transparent;
+}
+
+input[type='text']{
+  color: black;
+  outline: none;
+}
+
+input[type='text']:focus{
+  color: black;
+  outline: none;
+  background-color: white;
+}
+input[type='text']:focus:after{
+  color: black;
+  outline: none;
+  background-color: white;
+}
+input[type='date']:focus:after{
+  color: black;
+  outline: none;
+}
+input[type='date']:focus{
+  outline: none;
+}
+input[type='time']:focus:after{
+  color: black;
+  outline: none;
+}
+input[type='time']:focus{
+  outline: none;
+}
+.regi-item input{
+  height: 32px;
+}
+.regi-button button{
+  font-size     : 16px;        /* 文字サイズ */
+  text-align    : center;      /* 文字位置   */
+  margin-top: 16px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 16px;
+  padding-right: 16px;
+  cursor        : pointer;     /* カーソル   */
+  cursor        : pointer;     /* カーソル   */
+  background    : transparent;     /* 背景色     */
+  transition    : .5s;         /* なめらか変化 */
+  border        : 2px solid black;    /* 枠の指定 */
+
+    /*焦点中の動き*/
+    transition: all 0.4s;
+    cursor: pointer;
+}
+.regi-button:hover button {
+  border-radius: 15px;
+  background-color: rgb(189, 189, 189);
+}
+
+input[type="date"] {
+  border: 0;
+  background: transparent;
+  box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+input[type="time"] {
+  border: 0;
+  background: transparent;
+  box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+#deadline{
+  width:100%;
+  border-bottom: 2px solid #1b2538;
+  color: #aaaaaa;
+  background: transparent;
+}

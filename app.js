@@ -42,9 +42,68 @@ var connection = mysql.createConnection({
   database: 'my_lms'
 });
 
+/*
+ * /task-detail, タスク詳細画面からのpostリクエスト
+*/
+let t_task;
+app.post("/task-detail", async  (req, res) => {
+  console.log("rec\t: request /task-detail\n");
+  //getTaskList()
+  //const result = await getTaskListRes()
+  let task = await getTask(req.body.id);
+  await console.log("get task");
+  await console.log(task)
+  await console.log("send task");
+  await console.log(t_task)
+  await res.json({
+  id: 3,
+  name: '第12回　ノート',
+  category: '電子回路',
+  deadline: '2024-01-01T14:59:00.000Z',
+  submittedFlag: false,
+  submittedDate: null,
+  pdf: null,
+  text: null
+  })
+  new Promise((resolve) => {
+    //console.log(req.body)
+    getTask(req.body.id)
+    console.log("get task");
+    console.log(t_task)
+    resolve();
+  })
+  .then(() => {
+    console.log("send task");
+    console.log(t_task)
+    res.json({
+    id: 3,
+    name: '第12回　ノート',
+    category: '電子回路',
+    deadline: '2024-01-01T14:59:00.000Z',
+    submittedFlag: false,
+    submittedDate: null,
+    pdf: null,
+    text: null
+    })
+  });
+  
+});
+function getTask(id){
+  const sql = "select * from tasks where id="+id
+  console.log("sql : "+sql)
+  connection.query(sql, function (err, result, fields) {  
+    if (err) throw err;  
+    console.log("after sql")
+    t_task = result;
+    //console.log(typeof result[0]['pdf'])
+    console.log(t_task)
+  });
+  console.log("fin");
+  //return t_task
+  
+}
 let task_list;
 getTaskList()
-
 /*
  * getリクエスト, データベースへの読み込み, レスポンスを返す
 */

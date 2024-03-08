@@ -1,26 +1,79 @@
 let task_list_node = document.getElementById('task-list');
+let task_item_list = document.querySelectorAll('.task-item');
+let task_list;
+//console.log(task_item_list)
+
+/*
+ * タスクがクリックされた時の動作を登録する
+ * (既存のtask-item)
+*/
+task_item_list.forEach(task_item => {
+  task_item.addEventListener('click', ()=>{
+    storeSelctedTaskToLocalStrage(task_item)
+  })
+});
+/*
+task_item_list.forEach(task_item => {
+  task_item.addEventListener('click', storeSelctedTaskToLocalStrage(task_item))
+});
+*/
+/*
+ * タスクがクリックされた時の動作を登録する
+*/
+function storeSelctedTaskToLocalStrage(task_item_element){
+  let name_node = task_item_element.getElementsByClassName('name').item(0)
+  let selected_task ={
+    id : task_item_element.id,
+    name : name_node.textContent
+  }
+  setJsonLocalStrage('selected_task', selected_task)
+  //console.log("task-item"+task_item_element)
+  //console.log(name_node.textContent)
+  //console.log(localStorage)
+}
+function setJsonLocalStrage(key, json){
+  let jsonString = JSON.stringify(json);
+  localStorage.setItem(key, jsonString);
+}
+
+
 /*
  * httpsリクエスト
 */
-fetch("http://localhost:3000/task")
+document.addEventListener("DOMContentLoaded", (event) => {
+  console.log("DOM fully loaded and parsed");
+  loadTaskList()
+});
+
+function loadTaskList(){
+  fetch("http://localhost:3000/task")
   .then((response) =>{
     console.log("Success fetch")
     console.log(response);
     return response.json();
   } )
-  .then((task_list) => {
-    console.log(task_list)
-    for (let i = 0; i < task_list.length; i++) {
-      console.log(task_list[i])
-      task_list_node.appendChild(createTaskItemNode(task_list[i]));
-      console.log(createTaskItemNode(task_list[i]))
+  .then((list) => {
+    console.log(list)
+    for (let i = 0; i < list.length; i++) {
+      console.log(list[i])
+      //task-itemのaタグに、クリック時の動作を登録
+      let taskItemNode = createTaskItemNode(list[i])
+      let a_node = taskItemNode.querySelector('.task-item')
+      console.log("a-tag : ")
+      console.log(a_node)
+      a_node.addEventListener('click', ()=>{
+        storeSelctedTaskToLocalStrage(a_node)
+      });
+      //task_list_nodeへの追加
+      task_list_node.appendChild(taskItemNode);
+      //console.log(taskItemNode)
     }
-
-    return task_list;
+    task_list = list;
+    return list;
   })
   
   .catch((err) => console.log(err));
-
+}
 /*
  * 指定されたタグのノードを作成する。
  * kind       : タグ
@@ -28,7 +81,7 @@ fetch("http://localhost:3000/task")
  * text       : テキスト
  * 
 */
-function createNode(kind, className, text){
+function createNode(kind, className, text, id=null, link=null){
   let node = document.createElement(kind);
   let attrnode;
   //null or 空文字の場合
@@ -36,6 +89,15 @@ function createNode(kind, className, text){
     attrnode= document.createAttribute('class');
     attrnode.value = className;
     node.setAttributeNode(attrnode);
+  }
+  if(id){
+    let attrnode = document.createAttribute('id');
+    attrnode.value = id;
+    node.setAttributeNode(attrnode);
+  }
+  if(link){
+    // href属性の追加
+    node.setAttribute("href", link);
   }
   if(text){
     node.textContent = text;
@@ -56,16 +118,16 @@ function createNode(kind, className, text){
 */
 function createTaskItemNode(task){
   li_node = createNode('li', null, null)
-  a_node = createNode('a', 'task-item', null)
+  a_node = createNode('a', 'task-item', null, id=task.id, link="task-detail.html")
   li_node.appendChild(a_node)
   //未提出かつ、期限切れ(締め切り < 現在時刻)
   a_node.appendChild(createNode('div',
     (!task['submittedFlag'] && isExpired
     (task['deadline']))? 'expired':'in-date',
     task['submittedFlag']? '提出済み':'未提出'))
-  a_node.appendChild(createNode('div', null, task['name']));
+  a_node.appendChild(createNode('div', 'name', task['name']));
   a_node.appendChild(createNode('div', null, '期限-'+changeDateFromStr(task['deadline'])))
-  console.log(li_node)
+  //console.log(li_node)
   return li_node;
 }
 function isExpired(deadline) {
@@ -81,7 +143,7 @@ function isExpired(deadline) {
 function changeDateFromStr(deadline){
   let  formatted_deadline = "";
   let date_list = StringBreakIntoDateList(deadline)
-  console.log(date_list)
+  //console.log(date_list)
   if(date_list.length > 0){
     formatted_deadline = date_list[1]
       + '/' +  date_list[2]
@@ -90,9 +152,9 @@ function changeDateFromStr(deadline){
       + ':' +  date_list[5]
     console.log(date_list);
   }
-  console.log(deadline)
+  //console.log(deadline)
   
-  console.log("formatted_deadline : "+formatted_deadline);
+  //console.log("formatted_deadline : "+formatted_deadline);
   return formatted_deadline;
 }
 

@@ -1,0 +1,120 @@
+html{
+  font-family: "Open Sans", sans-serif; /* これが Google フォントから取得した残りの出力になるはず。 */
+}
+body{
+  /*width: 600px;*/
+  padding: 0 20px 20px 20px;
+  border: 5px solid black; 
+
+}
+ul, li{
+  list-style: none;
+}
+
+a{
+  text-decoration:none;
+}
+
+.header-nav-menu{
+  display: flex;
+  align-items:start;
+  gap: 10px;
+  
+  
+}
+.menu-item{
+  width: 100px;
+  height: 32px;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+.menu-item:hover{
+  background-color: rgb(210, 210, 210);
+}
+.menu-item a{
+  color: rgb(54, 54, 54);
+
+}
+iframe {
+  width: 100%;
+  height: 700px;
+  margin-top: 16px;
+}
+
+.button{
+  font-size     : 16px;        /* 文字サイズ */
+  text-align    : center;      /* 文字位置   */
+  margin-top: 16px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 16px;
+  padding-right: 16px;
+  cursor        : pointer;     /* カーソル   */
+  cursor        : pointer;     /* カーソル   */
+  background    : transparent;     /* 背景色     */
+  transition    : .5s;         /* なめらか変化 */
+  border        : 2px solid black;    /* 枠の指定 */
+
+    /*焦点中の動き*/
+    transition: all 0.4s;
+    cursor: pointer;
+}
+.button a{
+  color: black;
+}
+.button:hover {
+  border-radius: 15px;
+  background-color: rgb(189, 189, 189);
+}
+
+.main{
+  display: flex;
+  flex-direction: column;
+}
+.submit-item{
+  display: flex;
+  flex-direction: column;
+  column-gap: 40px;
+  /*align-items: ;*/
+  
+}
+
+.submit-item input[type='text'] {
+  outline: none;
+	width: 100%;
+	padding: 0.3em;
+	transition: 0.3s;
+  font-size: 16px;
+	/*color: #aaaaaa;*/
+  color: black;
+	border: none;
+	border-bottom: 2px solid #1b2538;
+	background: white;
+}
+#task-info{
+  display: flex;
+  flex-direction: column;
+  column-gap: 10px;
+  margin-bottom: 20px;
+}
+#task-info h2{
+  margin-bottom: 0px;
+}
+#task-info h6{
+  color: gray;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.submit-item input[type='file'] {
+  display: none;
+}
+#preview-file{
+  margin-left: 4px;
+  font-size: 14px;
+  color: rgb(80, 80, 80);
+}
+#send {
+  display: flex;
+  justify-content: flex-end;
+}

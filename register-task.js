@@ -29,7 +29,5 @@ submitBtn.addEventListener('click', ()=>{
   .catch((err) => {
     console.log(task)
     console.log(err)
-});
-
-
+  });
 })

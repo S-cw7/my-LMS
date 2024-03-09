@@ -24,6 +24,7 @@ var connection = mysql.createConnection({
 connection.connect((err) =>{
   if (err) throw err;
   console.log("Successed in connection as id");
+  
   var pdf_content = fs.readFileSync("test.pdf");
 
   /*

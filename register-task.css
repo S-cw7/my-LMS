@@ -124,6 +124,18 @@ input[type='time']:focus{
   border-radius: 15px;
   background-color: rgb(189, 189, 189);
 }
+.regi-button{
+  display: flex;
+  flex-direction: row;
+  /*justify-content: flex-end;*/
+  justify-content: space-between;
+  align-items:flex-end;
+}
+#errMsg{
+  color: red;
+  vertical-align:bottom;
+  /*margin: 16px;*/
+}
 
 input[type="date"] {
   border: 0;

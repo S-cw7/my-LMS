@@ -6,7 +6,8 @@ const deadline_date = document.getElementById("task-deadline-date");
 const deadline_time = document.getElementById("task-deadline-time");
 const submitBtn= document.getElementById("submit-button");
 
-submitBtn.addEventListener('click', ()=>{
+submitBtn.addEventListener('click', (event)=>{
+  event.preventDefault();
   task = {
     submittedFlag : false,
     name: task_name.value,
@@ -23,11 +24,14 @@ submitBtn.addEventListener('click', ()=>{
     body: JSON.stringify(task) 
   })
   .then((response) =>{
+    window.location.href = 'index.html';
     console.log("Success fetch")    
     console.log(response);
+    
   } )
   .catch((err) => {
     console.log(task)
+    errMsg.innerHTML="エラー：課題が登録できませんでした"
     console.log(err)
   });
 })

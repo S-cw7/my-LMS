@@ -4,38 +4,14 @@ let task_list;
 //console.log(task_item_list)
 
 /*
- * タスクがクリックされた時の動作を登録する
- * (既存のtask-item)
+ * ページ読み込み時の動作
 */
-task_item_list.forEach(task_item => {
-  task_item.addEventListener('click', ()=>{
-    storeSelctedTaskToLocalStrage(task_item)
-  })
-});
-/*
-task_item_list.forEach(task_item => {
-  task_item.addEventListener('click', storeSelctedTaskToLocalStrage(task_item))
-});
-*/
-/*
- * タスクがクリックされた時の動作を登録する
-*/
-function storeSelctedTaskToLocalStrage(task_item_element){
-  let name_node = task_item_element.getElementsByClassName('name').item(0)
-  let selected_task ={
-    id : task_item_element.id,
-    name : name_node.textContent
-  }
-  setJsonLocalStrage('selected_task', selected_task)
-  //console.log("task-item"+task_item_element)
-  //console.log(name_node.textContent)
-  //console.log(localStorage)
-}
-function setJsonLocalStrage(key, json){
-  let jsonString = JSON.stringify(json);
-  localStorage.setItem(key, jsonString);
-}
-
+window.onpageshow = function(event) {
+//	if (event.persisted)  window.location.reload();
+  //window.location.reload();
+  loadTaskList()
+	
+};
 
 /*
  * httpsリクエスト
@@ -118,7 +94,7 @@ function createNode(kind, className, text, id=null, link=null){
 */
 function createTaskItemNode(task){
   li_node = createNode('li', null, null)
-  a_node = createNode('a', 'task-item', null, id=task.id, link="task-detail.html")
+  a_node = createNode('a', 'task-item', null, id=task.id, link=task.submittedFlag? "show-task-detail.html":'submit-task.html')
   li_node.appendChild(a_node)
   //未提出かつ、期限切れ(締め切り < 現在時刻)
   a_node.appendChild(createNode('div',
@@ -165,4 +141,39 @@ function StringBreakIntoDateList(string){
     date_list = string.match(regrex); 
   }
   return date_list;
+}
+
+/*
+ * タスクがクリックされた時の動作を登録する
+ * (既存のtask-item)
+*/
+task_item_list.forEach(task_item => {
+  task_item.addEventListener('click', (event)=>{
+    event.preventDefault()
+    storeSelctedTaskToLocalStrage(task_item)
+    if(task_item.submittedFlag){
+      //提出済みの場合
+      window.location.href = 'submit-task.html';
+    }else{
+      //未提出の場合
+      window.location.href = 'show-task-detail.html';
+    }
+  })
+});
+/*
+ * タスクがクリックされた時の動作を登録する
+*/
+function storeSelctedTaskToLocalStrage(task_item_element){
+  let name_node = task_item_element.getElementsByClassName('name').item(0)
+  let selected_task ={
+    id : task_item_element.id,
+  }
+  setJsonLocalStrage('selected_task', selected_task)
+  //console.log("task-item"+task_item_element)
+  //console.log(name_node.textContent)
+  //console.log(localStorage)
+}
+function setJsonLocalStrage(key, json){
+  let jsonString = JSON.stringify(json);
+  localStorage.setItem(key, jsonString);
 }

@@ -44,16 +44,47 @@ var connection = mysql.createConnection({
   password: 'maresoya@l4o7ll',
   database: 'my_lms'
 });
+connection.connect((err) => {
+  if (err) {
+    console.log('error connecting: ' + err.stack);
+    return;
+  }
+  console.log('success');
+});
+//-------------------------------------------------------------------------------------
+/*
+ * タスク情報を受け取って、
+ * req.body = {全て？}, 必要なタスク情報はidのみ
+*/
+app.post("/delete-task", (req, res) => {
+  console.log("rec\t: request /delete-task\n");
+  console.log(req.body)
+
+  connection.query(
+    'DELETE FROM tasks WHERE id = ?',
+    [req.body.id], 
+    function( err, result ){
+       if (err) {
+        res.json({deleteFlag : false})
+        throw err; 
+       }else{
+        console.log(result)
+        res.json({deleteFlag : true})
+       } 
+       
+  })
+
+})
 //-------------------------------------------------------------------------------------
 /*
  * /task-submit, タスク詳細画面からのpostリクエスト, 課題の提出
+ * 与えられるタスク情報はidと、(pdf, text)を含むjsonを含むformDataである
+ * req.body = {id, (pdf), (text)}, , 必要なタスク情報はid, (pdf, text)のみ
 */
-const multer = require('multer')
 // static built-in middleware
-app.use(express.static('temp'))
+//app.use(express.static('temp'))
 // multer middleware
-//const upload = multer({ dest: 'uploads/' })
-//const upload = multer({ dest: './uploads/'})
+const multer = require('multer')
 //アップロードされたファイルを一時的に保存するフォルダへのパス名
 const updir = "./uploads/"
 //note:ファイルをアップロードするときはreq.body(json)に"id"が共に送信されているものとする
@@ -62,76 +93,121 @@ const storage = multer.diskStorage({
     callback(null, updir);
   },
   filename: (req, file, callback) =>{
+    //名前の変更、"id_元のファイル名"
     const unixTime = new Date().getTime();
-    //const fileName = `${unixTime}_${file.originalname}`;
     const fileName = `${req.body.id}_${file.originalname}`;
     callback(null, fileName)
   },
 })
 const upload = multer({storage})
-//app.post("/task-submit", upload.single("pdf"), async  (req, res) => {
 app.post("/task-submit", upload.array("pdf"), async  (req, res) => {
   console.log("rec\t: request /task-submit\n");
-  //console.log(req.body)
   let file_list =req.files
   console.log(file_list)
   console.log(req.files.length)
   console.log(req.body)
-  
-  for(let i = 0; i < file_list.length; i++) {
-    let newName = `${updir}${req.body.id}_${req.files[i].originalname}`;
-    fs.renameSync(file_list[i].path, newName);  // 長い一時ファイル名を元のファイル名にリネームする。
-    console.log(file_list[i])
+
+  //console.log("fileName : "+updir+req.files[0].filename)
+  //console.log("fileName : "+updir+req.files[0].path)
+  let new_task = req.body;
+  new_task.deadline = changeToMySqlDatetime(new_task.deadline)
+  new_task.submittedDate = changeToMySqlDatetime(new_task.submittedDate)
+  let update_task = {};
+  if(new_task["text"].length > 0){
+    //テキストが入力されていれば、それを更新する
+    //もし1文字以上入力されていなければ、前のデータのまま
+    update_task["text"] = new_task["text"]
   }
-    
-  //console.log(req.file)
-  /*
-  upload(req, res, (err) => {
-      if (err) {
-        throw err
-      }
-
-      console.log('/test1')
-      console.log(req.headers['content-type'])
-      console.log('* body')
-      console.log(req.body)
-      console.log('* files')
-      console.log(req.files)
-
-      res.status(200).json({ message: 'OK' })
+  if(file_list.length > 0){
+    //ファイルが入力されていれば、それを更新する
+    //もし1文字以上入力されていなければ、前のデータのまま
+    update_task["pdf"] =  fs.readFileSync(updir+file_list[0].filename);
+  }
+  
+  if(Object.keys(update_task).length > 0){
+    //テキストorファイルが送信されると、提出済みにする
+    //データを更新する
+    update_task["submittedFlag"] = true;
+    update_task["submittedDate"] = new_task["submittedDate"];
+    connection.query(
+      'UPDATE tasks SET ? WHERE id = ?',
+      [update_task,  req.body.id], 
+      function( err, result ){
+         if (err) throw err;  
+         console.log(result)
     })
+    console.log(" > succeeded to update")
+  }else{
+    console.log(" > failed to update")
+  }
+  res.end();
+});
 /*
-  console.log(req.body)
-  console.log(typeof req.body.pdf)
-  console.log(req.body.pdf)
-  console.log(req.arrayBuffer())
-  var pdf_content ;
-  //console.log(toBlob(req.body.pdf))
+ * new Date().toJSON/.toISOString()の返り値、"YYYY-MM-DDThh:mm:ssZ"という形式の文字列を
+ * mySQLのdatetime型である"YYYY-MM-DD hh:mm:ss"の形式の文字列に変換する
+*/
+function changeToMySqlDatetime(old_datetime) {
+  let new_datetime = old_datetime.replace("T", " ");
+  return new_datetime.replace("Z", "");
+}  
+/*
+ if(file_list.length > 0){
+    new_task["pdf"] = fs.readFileSync(updir+file_list[0].filename);
+  }else{
+    new_task["pdf"] = null;
+  }
+  connection.query('UPDATE tasks SET ? WHERE id = ?',
+    [{ 
+      submittedFlag : true,
+      category : new_task.category,
+      name: new_task.name,
+      deadline : new_task.deadline,
+      submittedDate: new_task.submittedDate,
+      pdf: new_task.pdf,
+      text: new_task.text
+    },
+    req.body.id], 
+    function( err, result ){
+       if (err) throw err;  
+       console.log(result)
+   })
+
 
   let sql =`UPDATE tasks SET `;
   let keys = Object.keys(req.body);
   let values = Object.values(req.body);
   for (let i = 0; i < keys.length; i++) {
+
     if (keys[i] == 'id') {
       values[i] = values[i];
     }else if(keys[i] == 'submittedFlag'){
       values[i] = values[i]==0? 'false':'true';
+    
     }else{
       values[i] = "'"+values[i]+"'";
+    }
+    if(values[i].length < 0){
+      //値がnullの場合
+      values[i] = "null" ;
     }
     
   }
   for (let i = 0; i < keys.length; i++) {
-    if (keys[i] != "pdf") {
-      sql = sql + `'${keys[i]}' = '${values[i]}' `;
-      //console.log(`${keys[i]} : ${values[i]}`)
-    }else{
-      sql = sql + `'${keys[i]}' = ${values[i]} `;
-    }
     
   }
   sql += `WHERE id = ${req.body.id}`;
-  //console.log("sql : "+sql)
+  console.log("sql : "+sql)
+
+  var pdf_content = 
+*/
+  /*
+  const in_sql = "insert into test values ('', '期末試験', '', '完了');"
+  connection.query(in_sql, function (err, result, fields) {  
+    if (err) throw err;  
+    console.log(result)
+  });
+  */
+
   /*
   new Promise((resolve) => {
 
@@ -151,23 +227,8 @@ app.post("/task-submit", upload.array("pdf"), async  (req, res) => {
     res.json(task)
   });
   */
-});
-function toBlob(base64) {
-  var bin = atob(base64.replace(/^.*,/, ''));
-  var buffer = new Uint8Array(bin.length);
-  for (var i = 0; i < bin.length; i++) {
-      buffer[i] = bin.charCodeAt(i);
-  }
-  // Blobを作成
-  try{
-      var blob = new Blob([buffer.buffer], {
-          type: 'application/json'
-      });
-  }catch (e){
-      return false;
-  }
-  return blob;
-}
+
+
 //-------------------------------------------------------------------------------------
 /*
  * /task-detail, タスク詳細画面からのpostリクエスト
@@ -244,7 +305,8 @@ function getTaskList(){
 app.post("/register", (req, res) => {
   console.log("Fin : Receive register-task request\n");
   registerTask(req.body);
-
+  //TODO : データベースに登録できなかった場合
+  res.end();
 });
 
 

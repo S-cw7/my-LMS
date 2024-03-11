@@ -79,16 +79,71 @@ fetch("http://127.0.0.1:3000/task-detail", {
   },
   body: JSON.stringify(getJsonLocalStrage("selected_task")) 
 })
+.then((response) =>{
+  console.log("Success send")    
+  console.log(response);
+  return response.json();
+  //return  response.arrayBuffer();
+} )
+.then(task => {
+  console.log(task)
+  //タスク情報のセット
+  setTaskInfo(task[0])
+  //まずはテキスト情報のみ取得する
+  if(task[0].text != null && task[0].text.length > 0) task_text.value=task[0].text;
+  fetch("http://127.0.0.1:3000/task-detail-file")
   .then((response) =>{
     console.log("Success send")    
     console.log(response);
-    return response.json();
-  } )
+    return  response.arrayBuffer();
+  })
+  .then((arrayBuffer) =>{
+    console.log(arrayBuffer)
+    const download = document.getElementById('download');
+    //var blob = new Blob([buffer], {type: "application/pdf"});
+    var blob = new Blob([arrayBuffer], {type: "application/pdf"});
+    
+    url = window.URL.createObjectURL(blob);
+    console.log(url);
+    //download.href = url;
+    //task_file.src =  "http://localhost:5500/pdfjs-4.0.379/web/viewer.html?file="+url;
+   task_file.src =  url;
+  })  
+})
+/*
+.then(buffer => {
+  let str = "";
+  console.log(buffer[0])
+  console.log(buffer[0].pdf)
+  console.log(buffer[0].pdf.data)
+  new Response(buffer[0].pdf.data).arrayBuffer()
+  .then((arrayBuffer) =>{
+    console.log(arrayBuffer)
+    console.log(arrayBuffer)
+    console.log(buffer)
+    const download = document.getElementById('download');
+    //var blob = new Blob([buffer], {type: "application/pdf"});
+    var blob = new Blob([buffer[0].pdf.data], {type: "application/pdf"});
+    //console.log(task[0].pdf);
+    //console.log(task[0].pdf.data);
+    //console.log(task[0].pdf.data.toString());
+    
+    url = window.URL.createObjectURL(blob);
+    console.log(url);
+    //download.href = url;
+    //task_file.src =  "http://localhost:5500/pdfjs-4.0.379/web/viewer.html?file="+url;
+    task_file.src =  url;
+  })
+
+
+})
+*/
+  /*
   .then((task) => {
     //要：エラー処理
     console.log(task)
     new_task = task[0];
-    setTaskInfo(task[0])
+    
 
 
     //@subimit-task.jsから追加した点
@@ -104,18 +159,34 @@ fetch("http://127.0.0.1:3000/task-detail", {
     var blob_url = window.URL.createObjectURL(blob);
     console.log( blob_url)
     window.open(blob_url)
-    */
-   
+
     let f = new File([task[0].pdf], "ts.pdf", {type: "application/pdf"});
     console.log(f)
     console.log(URL.createObjectURL(f))
-    
+
+                                 
+      const download = document.getElementById('download');
+       var blob = new Blob([task[0].pdf.data], {type: "application/pdf"});
+       console.log(task[0].pdf);
+       console.log(task[0].pdf.data);
+       console.log(task[0].pdf.data.toString());
+       
+       url = window.URL.createObjectURL(blob);
+       console.log(url);
+       download.href = url;
+       download.download = "aaa"
+       //a.click();
+      // window.URL.revokeObjectURL(url);
     //file.src = "./pdfjs-4.0.379/web/viewer.html?file="+URL.createObjectURL(f)
     //task_file.srcObject = task[0].pdf
-   task_file.src =  window.URL.createObjectURL(task[0].pdf)
-    
+  // task_file.src =  window.URL.createObjectURL(task[0].pdf)
+
+   
+
+   
     return task;
   })
+  */
   .catch((err) => {
     //window.location.href = 'index.html';
     console.log(err)

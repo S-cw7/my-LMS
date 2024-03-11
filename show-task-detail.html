@@ -18,7 +18,8 @@
     <button type="submit" class="button" id="resubmitBtn"><a href = "submit-task.html">再提出</a></button>
     <button type="submit" class="button"><a href = "edit-task.html">課題内容の変更</a></button>
     <button type="submit" class="button" id = "deleteBtn"><a href = "/index.html">課題の削除</a>
-  </div>
+
+    </div>
   <div class="main">
     <div id="task-info">
       <h2 id="name"></h2>
@@ -33,12 +34,16 @@
       <input type="text" id="task-text">
       <h4>ファイル</h4>
 
-      <iframe id = "task-file" width="400" height="300" src=""></iframe>
+      <iframe id = "task-file" width="400" height="300" src="">
+      <iframe width="400" height="300" src="http://localhost:5500/pdfjs-4.0.379/web/viewer.html?file=test.pdf">
       </div>
     </div>
     
     
   </div>
+  <a id = "download" href="" download>
+    <p>Click here to download!<p>
+  </a>
   </body>
 </html>
 

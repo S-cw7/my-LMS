@@ -16,9 +16,8 @@ let new_task;
  * 「課題の削除」ボタンの入力で、登録された課題を削除する
 */
 deleteBtn.addEventListener('click', (event)=>{
-  console.log(task_file.files[0])
   //event.preventDefault()
-  /*;
+
   fetch("http://127.0.0.1:3000/delete-task", {
     method: 'POST',
     headers: {
@@ -37,7 +36,6 @@ deleteBtn.addEventListener('click', (event)=>{
     errMsg.innerHTML="エラー：課題が削除できませんでした"
     console.log(err)
   });
-  */
 })
 //-------------------------------------------------------------------------------------------------------------
 
@@ -65,6 +63,7 @@ fetch("http://127.0.0.1:3000/task-detail", {
   })
   .catch((err) => {
     //window.location.href = 'index.html';
+    errMsg.innerHTML="エラー：課題を送信できませんでした"
     console.log(err)
   });
 
@@ -133,7 +132,6 @@ function getJsonLocalStrage(key) {
 sndBtn.addEventListener('click', (event)=>{
   try {
 
- 
     event.preventDefault();
     console.log(task_file.files)
     console.log(task_text.value)
@@ -159,12 +157,6 @@ sndBtn.addEventListener('click', (event)=>{
     for (let value of formData.entries()) { 
       console.log(value); 
   }
-    //base64に変換して、
-    //let file_reader = new FileReader();
-    //file_reader.readAsDataURL(task_file.files[0]);
-  
-    //new_task.pdf = task_file.files[0];
-    //
     
     fetch("http://127.0.0.1:3000/task-submit", {
       method: 'POST',
@@ -173,7 +165,7 @@ sndBtn.addEventListener('click', (event)=>{
     .then((response) =>{
       console.log("Success send")    
       console.log(response);
-      //window.location.href = 'index.html';
+      window.location.href = 'index.html';
       //return response.json();
 
     } )

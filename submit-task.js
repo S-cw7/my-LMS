@@ -16,7 +16,9 @@ let new_task;
  * 「課題の削除」ボタンの入力で、登録された課題を削除する
 */
 deleteBtn.addEventListener('click', (event)=>{
-  //event.preventDefault();
+  console.log(task_file.files[0])
+  //event.preventDefault()
+  /*;
   fetch("http://127.0.0.1:3000/delete-task", {
     method: 'POST',
     headers: {
@@ -35,6 +37,7 @@ deleteBtn.addEventListener('click', (event)=>{
     errMsg.innerHTML="エラー：課題が削除できませんでした"
     console.log(err)
   });
+  */
 })
 //-------------------------------------------------------------------------------------------------------------
 
@@ -129,7 +132,7 @@ function getJsonLocalStrage(key) {
 */
 sndBtn.addEventListener('click', (event)=>{
   try {
-    
+
  
     event.preventDefault();
     console.log(task_file.files)
@@ -149,8 +152,9 @@ sndBtn.addEventListener('click', (event)=>{
     }
     //ファイル1つしかアップロードできない。複数選択されたときは最初の1つのみをアップロードする
     let file_list = task_file.files
+    console.log(file_list[0])
     for (let i = 0; i < file_list.length; i++) {
-      formData.append("pdf", file_list[i])
+      formData.append("pdf", new Blob([file_list[i]], { type: file_list[i].type }))
     }
     for (let value of formData.entries()) { 
       console.log(value); 
@@ -169,7 +173,7 @@ sndBtn.addEventListener('click', (event)=>{
     .then((response) =>{
       console.log("Success send")    
       console.log(response);
-      window.location.href = 'index.html';
+      //window.location.href = 'index.html';
       //return response.json();
 
     } )
@@ -209,7 +213,8 @@ task_file.addEventListener('change',e=>{
     htmlText += files[i].name + "<br>" ;
   }
   console.log(htmlText)
-  preview_file.innerHTML = htmlText;
+  //preview_file.innerHTML = htmlText;
+
 
     let file = e.target.files[0];
     let reader = new FileReader();
@@ -224,6 +229,19 @@ task_file.addEventListener('change',e=>{
     reader.onerror = function() {
       console.log(reader.error);
     };
+/*
+    let f = new File([files[0]], "ts.pdf", {type: "application/pdf"});
+    console.log(f)
+    console.log(URL.createObjectURL(f))
+    
+    file.src = "./pdfjs-4.0.379/web/viewer.html?file="+URL.createObjectURL(f)
+    */
+        // ファイルのブラウザ上でのURLを取得する
+        var blobUrl = window.URL.createObjectURL(file);
+
+        // img要素に表示
+        preview_file.src = blobUrl;
+        console.log(file)
   
 });
 

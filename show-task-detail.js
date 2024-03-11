@@ -5,6 +5,7 @@ const name_element = document.getElementById('name');
 const deadline_element = document.getElementById('deadline');
 const category_element = document.getElementById('category');
 const errMsg = document.getElementById("errMsg")
+const task_file = document.getElementById('task-file');
 let shown_task;
 //-------------------------------------------------------------------------------------------------------------
 /*
@@ -24,7 +25,19 @@ window.onpageshow = function(event) {
  * 「再提出」ボタンを押したときに、submit-task.htmlに遷移する前に、
  * localStrageにselected_taskを保存する
 */
-/*
+resubmitBtn.addEventListener('click', (event)=>{
+  /*
+  event.preventDefault()
+  // Blobを生成する
+  var blob = new Blob([arrayBuffer], {type: "application/pdf"});
+  console.log(blob);
+  
+  // BlobをBlobURLスキームに変換して、img要素にセットする。
+  var blob_url = window.URL.createObjectURL(blob);
+  console.log( blob_url)
+  file.src = "./pdfjs-4.0.379/web/viewer.html?file=test.pdf"
+  */
+})
 
 
 //-------------------------------------------------------------------------------------------------------------
@@ -76,8 +89,31 @@ fetch("http://127.0.0.1:3000/task-detail", {
     console.log(task)
     new_task = task[0];
     setTaskInfo(task[0])
+
+
     //@subimit-task.jsから追加した点
-    if(task[0].text.length > 0) task_text.value=task[0].text;
+    //if(task[0].text || task[0].text.length > 0) task_text.value=task[0].text;
+        // Blobを生成する
+        /*
+        console.log("task[0].pdf")
+        console.log(task[0].pdf)
+    var blob = new Blob([task[0].pdf], {type: "application/pdf"});
+    console.log(blob);
+    
+    // BlobをBlobURLスキームに変換して、img要素にセットする。
+    var blob_url = window.URL.createObjectURL(blob);
+    console.log( blob_url)
+    window.open(blob_url)
+    */
+   
+    let f = new File([task[0].pdf], "ts.pdf", {type: "application/pdf"});
+    console.log(f)
+    console.log(URL.createObjectURL(f))
+    
+    //file.src = "./pdfjs-4.0.379/web/viewer.html?file="+URL.createObjectURL(f)
+    //task_file.srcObject = task[0].pdf
+   task_file.src =  window.URL.createObjectURL(task[0].pdf)
+    
     return task;
   })
   .catch((err) => {
@@ -114,7 +150,7 @@ function changeDateFromStr(deadline){
       + '/' +  date_list[3]
       + ' ' +  date_list[4]
       + ':' +  date_list[5]
-    console.log(date_list);
+    //console.log(date_list);
   }
   //console.log(deadline)
   

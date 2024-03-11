@@ -1,1 +1,1 @@
-loadTaskList
+console.log(typeof data)

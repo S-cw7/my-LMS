@@ -103,45 +103,70 @@ const upload = multer({storage})
 app.post("/task-submit", upload.array("pdf"), async  (req, res) => {
   console.log("rec\t: request /task-submit\n");
   let file_list =req.files
+  let new_task = req.body;
+  let update_task = {};
+
   console.log(file_list)
-  console.log(req.files.length)
+  console.log(req.files[0])
   console.log(req.body)
 
-  //console.log("fileName : "+updir+req.files[0].filename)
-  //console.log("fileName : "+updir+req.files[0].path)
-  let new_task = req.body;
+
   new_task.deadline = changeToMySqlDatetime(new_task.deadline)
   new_task.submittedDate = changeToMySqlDatetime(new_task.submittedDate)
-  let update_task = {};
+  
   if(new_task["text"].length > 0){
     //テキストが入力されていれば、それを更新する
     //もし1文字以上入力されていなければ、前のデータのまま
     update_task["text"] = new_task["text"]
   }
-  if(file_list.length > 0){
-    //ファイルが入力されていれば、それを更新する
-    //もし1文字以上入力されていなければ、前のデータのまま
-    update_task["pdf"] =  fs.readFileSync(updir+file_list[0].filename);
-  }
+  console.log(update_task)
+  new Promise((resolve) => {
+    if(file_list.length > 0){
+      //ファイルが入力されていれば、それを更新する
+      //もし1文字以上入力されていなければ、前のデータのまま
+      console.log(updir+file_list[0].filename)
+      fs.readFileSync(updir+file_list[0].filename, (err, data)=>{
+        if(err) console.log(err)
+        update_task["pdf"] =  data;
+          console.log("Promise before resolve")
+          console.log(typeof data)
+          resolve(update_task)
+
+        
+      });
+    }else{
+      resolve(update_task)
+    }
+    
+  })
+  .then((u_task) => {
+    console.log("Promise then")
+    if(Object.keys(u_task).length > 0){
+      console.log(u_task)
+      //テキストorファイルが送信されると、提出済みにする
+      //データを更新する
+      u_task["submittedFlag"] = true;
+      u_task["submittedDate"] = new_task["submittedDate"];
+      connection.query(
+        'UPDATE tasks SET ? WHERE id = ?',
+        [u_task,  req.body.id], 
+        function( err, result ){
+          if (err) throw err;  
+          console.log(result)
+          console.log(" > succeeded to update")
+          res.end();
+        }
+      ) 
+    }else{
+      console.log(" > failed to update")
+      res.end();
+    }
+    
+  });
   
-  if(Object.keys(update_task).length > 0){
-    //テキストorファイルが送信されると、提出済みにする
-    //データを更新する
-    update_task["submittedFlag"] = true;
-    update_task["submittedDate"] = new_task["submittedDate"];
-    connection.query(
-      'UPDATE tasks SET ? WHERE id = ?',
-      [update_task,  req.body.id], 
-      function( err, result ){
-         if (err) throw err;  
-         console.log(result)
-    })
-    console.log(" > succeeded to update")
-  }else{
-    console.log(" > failed to update")
-  }
-  res.end();
 });
+
+
 /*
  * new Date().toJSON/.toISOString()の返り値、"YYYY-MM-DDThh:mm:ssZ"という形式の文字列を
  * mySQLのdatetime型である"YYYY-MM-DD hh:mm:ss"の形式の文字列に変換する
@@ -247,8 +272,21 @@ app.post("/task-detail", async  (req, res) => {
     });
   })
   .then((task) => {
+
+    let jsonTask = JSON.stringify(task[0]);
+    let jsonTask2 = task[0].RowDataPacket;
     console.log("send task");
-    console.log(task)
+    //console.log(jsonTask);
+    console.log(task[0].pdf)
+    console.log(task[0]["text"])
+    console.log(typeof task[0]["pdf"])
+    //console.log(typeof task[0]["pdf"].toString())
+    /*
+    fs.writeFile('hoge.pdf', task[0]["pdf"].toString(),  (err)=>{
+      if(err) console.log(`error!::${err}`);
+    });
+    */
+    console.log(task[0])
     res.json(task)
   });
   

@@ -8,6 +8,7 @@ const submitBtn= document.getElementById("submit-button");
 
 submitBtn.addEventListener('click', (event)=>{
   event.preventDefault();
+  console.log(deadline_date.value+" "+deadline_time.value)
   task = {
     submittedFlag : false,
     name: task_name.value,

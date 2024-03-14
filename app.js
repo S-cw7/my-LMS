@@ -77,6 +77,31 @@ app.post("/delete-task", (req, res) => {
 })
 //-------------------------------------------------------------------------------------
 /*
+ * 一括削除依頼を処理する
+ * タスク情報を受け取って、
+ * req.body = {全て？}, 必要なタスク情報はidのみ
+*/
+app.post("/batch-delete-task", (req, res) => {
+  console.log("rec\t: request /batch-delete-task\n");
+  console.log(req.body)
+
+  connection.query(
+    'DELETE FROM tasks WHERE id IN (?)',
+    [req.body], 
+    function( err, result ){
+       if (err) {
+        res.json({deleteFlag : false})
+        throw err; 
+       }else{
+        console.log(result)
+        res.json({deleteFlag : true})
+       } 
+       
+  })
+
+})
+//-------------------------------------------------------------------------------------
+/*
  * /task-submit, タスク詳細画面からのpostリクエスト, 課題の提出
  * 与えられるタスク情報はidと、(pdf, text)を含むjsonを含むformDataである
  * req.body = {id, (pdf), (text)}, , 必要なタスク情報はid, (pdf, text)のみ
@@ -144,6 +169,29 @@ app.post("/task-submit", upload.array("pdf"), async  (req, res) => {
   res.end();
 });
 
+app.post("/update-task", async  (req, res) => {
+
+  console.log("rec\t: request /update-task\n");
+  console.log(req.body)
+
+  let new_task = req.body;
+  let update_task = {};
+  update_task.name = new_task.name
+  update_task.category = new_task.category
+  update_task.deadline = changeToMySqlDatetime(new_task.deadline)
+
+  //データを更新する
+  connection.query(
+    'UPDATE tasks SET ? WHERE id = ?',
+    [update_task,  req.body.id], 
+    function( err, result ){
+        if (err) throw err;  
+        console.log(result)
+  })
+  console.log(" > succeeded to update")
+  res.end();
+});
+
 
 /*
  * new Date().toJSON/.toISOString()の返り値、"YYYY-MM-DDThh:mm:ssZ"という形式の文字列を
@@ -174,7 +222,7 @@ app.post("/task-detail", async  (req, res) => {
   })
   .then((task)=>{
     console.log("send task.pdf")
-    console.log(task[0].pdf)
+    //console.log(task[0].pdf)
     getted_task = task;
     res.json(task)
 
@@ -220,10 +268,20 @@ function getTaskList(){
     console.log(result)
     result.sort(function(a, b) {
       var r = 0;
+      var a_date = new Date(a.deadline)
+      var b_date = new Date(b.deadline)
+      if( a_date < b_date ){ r = -1; }
+      else if( a_date > b_date ){ r = 1; }
+      return r;
+    })
+    /*
+    result.sort(function(a, b) {
+      var r = 0;
       if( a.task_name < b.task_name ){ r = -1; }
       else if( a.task_name > b.task_name ){ r = 1; }
       return r;
     })
+    */
     console.log(result)
     task_list = result;
     //console.log(typeof result[0]['pdf'])

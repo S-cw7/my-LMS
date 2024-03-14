@@ -16,9 +16,9 @@
   </nav>
   <div class = "buttons">
     
-    <button type="submit" class="button"><a href = "/register-task.html">課題内容の変更</a></button>
+    <button type="submit" class="button"><a href = "/edit-task.html">課題内容の変更</a></button>
     <button type="submit" class="button" id = "deleteBtn"><a href = "/index.html">課題の削除</a></button>
-    <button type="submit" class="button submit-button" id="submit-button">送信</button> 
+    
   </div>
 
   <div class="main">
@@ -33,12 +33,13 @@
         <div class="file">
           <input type="file"  id ="input-file" accept="image/png, image/jpeg, application/pdf" multiple>
           <button id="btn-file" class="button">ファイルの提出</button> 
+          <button type="submit" class="button submit-button">送信</button> 
           <iframe id="preview-file" width="400" height="300" src=""></iframe>
         </div>
     </div>
     <div id="send">
       <div id ="errMsg"></div>
-      <button type="submit" class="button submit-button" id="submit-button">送信</button>      
+      <button type="submit" class="button submit-button">送信</button>      
     </div>
   </div>
   </body>

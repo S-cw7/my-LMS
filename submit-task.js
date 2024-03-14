@@ -3,7 +3,8 @@ const task_file = document.getElementById('input-file');
 const btn_file = document.getElementById('btn-file');
 const preview_file = document.getElementById('preview-file');
 const task_text = document.getElementById('task-text');
-const sndBtn= document.getElementById('submit-button');
+//const sndBtn= document.getElementById('submit-button');
+const sndBtn_list= document.querySelectorAll('.submit-button');
 const deleteBtn = document.getElementById("deleteBtn");
 const name_element = document.getElementById('name');
 const deadline_element = document.getElementById('deadline');
@@ -129,61 +130,57 @@ function getJsonLocalStrage(key) {
 /*
  * 送信ボタンのクリック時の動作
 */
-sndBtn.addEventListener('click', (event)=>{
-  try {
-
-    event.preventDefault();
-    console.log(task_file.files)
-    console.log(task_text.value)
-    //データの更新
-    new_task.text = task_text.value
-    new_task.submittedDate= new Date().toJSON()
-    new_task.submittedFlag= true
-    //サーバにアップロード
-    console.log(new_task)
-    let formData = new FormData();
-    let keys = Object.keys(new_task);
-    let values = Object.values(new_task);
-    //pdf以外のタスク情報を登録
-    for (let i = 0; i < keys.length; i++) {
-      if(keys[i] != "pdf") formData.append(keys[i], values[i]);
-    }
-    //ファイル1つしかアップロードできない。複数選択されたときは最初の1つのみをアップロードする
-    let file_list = task_file.files
-    console.log(file_list[0])
-    for (let i = 0; i < file_list.length; i++) {
-      formData.append("pdf", new Blob([file_list[i]], { type: file_list[i].type }))
-    }
-    for (let value of formData.entries()) { 
-      console.log(value); 
-  }
-    
-    fetch("http://127.0.0.1:3000/task-submit", {
-      method: 'POST',
-      body: formData
-    })
-    .then((response) =>{
-      console.log("Success send")    
-      console.log(response);
-      window.location.href = 'index.html';
-      //return response.json();
-
-    } )
+sndBtn_list.forEach(sndBtn => {
+  sndBtn.addEventListener('click', (event)=>{
+    try {
   
-
-    .catch((err) => {
-      console.log(err)
-      throw err
-      
-    });
-  } catch (error) {
-    console.log(error)
-    //window.location.href = 'register-task.html';
-
-  }
-
-})
-
+      event.preventDefault();
+      console.log(task_file.files)
+      console.log(task_text.value)
+      //データの更新
+      new_task.text = task_text.value
+      new_task.submittedDate= new Date().toJSON()
+      new_task.submittedFlag= true
+      //サーバにアップロード
+      console.log(new_task)
+      let formData = new FormData();
+      let keys = Object.keys(new_task);
+      let values = Object.values(new_task);
+      //pdf以外のタスク情報を登録
+      for (let i = 0; i < keys.length; i++) {
+        if(keys[i] != "pdf") formData.append(keys[i], values[i]);
+      }
+      //ファイル1つしかアップロードできない。複数選択されたときは最初の1つのみをアップロードする
+      let file_list = task_file.files
+      console.log(file_list[0])
+      for (let i = 0; i < file_list.length; i++) {
+        formData.append("pdf", new Blob([file_list[i]], { type: file_list[i].type }))
+      }
+      for (let value of formData.entries()) { 
+        console.log(value); 
+      }
+      fetch("http://127.0.0.1:3000/task-submit", {
+        method: 'POST',
+        body: formData
+      })
+      .then((response) =>{
+        console.log("Success send")    
+        console.log(response);
+        window.location.href = 'index.html';
+        //return response.json();
+  
+      } )
+      .catch((err) => {
+        console.log(err)
+        throw err
+        
+      });
+    } catch (error) {
+      console.log(error)
+      //window.location.href = 'register-task.html';
+    }
+  })
+});
 
 //-------------------------------------------------------------------------------------
 /*

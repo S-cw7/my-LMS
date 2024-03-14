@@ -62,7 +62,7 @@ a{
 }
 .task-item{
   display: grid;
-  grid-template-columns: 2fr 8fr 4fr;
+  grid-template-columns: 1fr 15fr;
   grid-column-gap: 10px; 
 
   
@@ -75,12 +75,58 @@ a{
   cursor: pointer;
 
 }
+.task-item .task-info{
+  display: grid;
+  grid-template-columns: 2fr 8fr 4fr;
+  grid-column-gap: 10px; 
+}
 .task-item:hover{
   border-radius: 15px;
-  background-color: rgb(189, 189, 189);
   
 }
-.task-item .right{
 
+
+.drop-menu {
+  position: absolute;
+  top: 60px;
+  transition: all .3s;
+  padding: 0;
+  margin: 0;
+}
+
+.drop-menu__link {
+  display: none;
+  /* display: none; デフォルトの設定は消す */ 
+  background-color: #ffffff;
+  padding: 0px 20px;
+
+  cursor        : pointer;     /* カーソル  */
+  transition    : .5s;         /* なめらか変化 */
+  border        : 1px solid black;    /* 枠の指定 */
+
+  /*焦点中の動き*/
+  transition: all 0.4s;
+  cursor: pointer;
+
+  font-size     : 12px;        /* 文字サイズ */
+  text-align    : center;      /* 文字位置   */
+
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 16px;
+  padding-right: 16px;
+  transition: all .3s; /* 追記 */
+
+}
+
+.drop-menu__link:hover {
+  background-color: rgb(224, 224, 224);
+  /*border-radius: 15px;*/
+}
+/* ドロップダウン出現後のスタイル */
+.drop-menu__link.is-active {
+  display: block;
+  padding: 5px 20px; /* 追記 */
+  transition: all .4s; /* 追記 */
 }
 

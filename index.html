@@ -12,25 +12,37 @@
     <ul class = "header-nav-menu">
       <li class = "menu-item"><a href = "index.html">トップ</a></li>
       <li class = "menu-item"><a href = "register-task.html">課題登録</a></li>
+      <li class = "menu-item" id = "batchDeleBtn"><a>一括削除</a></li>
+      <li class = "menu-item menu__item">
+        <a class="menu__link">絞り込み</a>
+        <ul class="drop-menu">
+        </ul>
+      </li>
+      <li class = "menu-item" id ="jump-bottom"><a>末尾へ</a></li>
     </ul>
   </nav>
   <div id="task-list">
       <li><a class = "task-item" id ="-3" href="task-detail.html">
-        <div class="submitted-status expired">未提出</div>
-        <div class="name">課題名</div> 
-        <div>期日-2024/2/23 23:59</div>
+        <div class="div-checkbox">
+          <input type="checkbox" class="checkbox" name="" >
+        </div>
+        <div class="task-info">
+          <div class="submitted-status expired">未提出</div>
+          <div class="name">課題名</div> 
+          <div>期日-2024/2/23 23:59</div>
+        </div>
       </a></li>
-      <li><a class = "task-item" id ="-2" href="task-detail.html">
-        <div class="submitted-status in-date" >提出済み</div>
-        <div  class="name">第12回　ノート</div>
-        <div>期日-2/23 23:59</div>
-      </a></li>
-      <li><a class = "task-item" id ="-1" href="task-detail.html">
-        <div class="submitted-status in-date" >提出済み</div>
-        <div  class="name">第12回　ノートああああああああああああああ</div>
-        <div>期日-2/23 23:59</div>
+      <li><a class = "task-item" id ="-3" href="task-detail.html">
+        <div>
+          <input type="checkbox" class="checkbox">
+        </div>
+        <div class="task-info">
+          <div class="in-date">未提出</div>
+          <div class="name">課題名</div> 
+          <div>期日-2024/2/23 23:59</div>
+        </div>
       </a></li>
   </div>
-
+  <li class = "menu-item" id ="jump-top"><a>トップへ</a></li>
   </body>
 </html>

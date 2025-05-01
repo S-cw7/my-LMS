@@ -37,3 +37,8 @@
  index.html, index.js など
  - サーバ   
  app.js
+
+ - 使用ライブラリ
+    -  Node.js
+    - PDF.js
+    - express

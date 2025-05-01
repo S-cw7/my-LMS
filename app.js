@@ -20,7 +20,7 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const fs = require("fs");
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3306;
 app.set('port', port);
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -39,11 +39,13 @@ app.use(express.json({limit: '10mb' })) // for parsing application/json
 app.use(express.urlencoded({ extended: true})) // for parsing application/x-www-form-urlencoded
 
 var connection = mysql.createConnection({
-  host: 'localhost',
+  // host: 'localhost',
+  host: '127.0.0.1',
   user    : 'root',
   password: 'maresoya@l4o7ll',
   database: 'my_lms'
 });
+
 connection.connect((err) => {
   if (err) {
     console.log('error connecting: ' + err.stack);
@@ -340,5 +342,5 @@ function checkTask(task){
  * サーバーの開始
 */
 app.listen(port, () => console.log(`App started on port ${port}.`));
-
+getTaskList()
 

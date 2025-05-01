@@ -51,7 +51,7 @@ batchDeleBtn.addEventListener('click', ()=>{
   console.log(delete_list)
 
   //サーバへの一括削除依頼
-  fetch("http://127.0.0.1:3000/batch-delete-task", {
+  fetch("http://127.0.0.1:3306/batch-delete-task", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 });
 
 function loadTaskList(){
-  fetch("http://localhost:3000/task")
+  fetch("http://localhost:3306/task")
   .then((response) =>{
     console.log("Success fetch")
     console.log(response);
